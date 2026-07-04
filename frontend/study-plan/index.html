@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Plan – StudyMate AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .plan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .day-card {
+      margin-bottom: 2.5rem;
+    }
+    .day-header {
+      background-color: var(--accent-purple);
+      color: white;
+      padding: 0.75rem 1.25rem;
+      font-weight: 800;
+      font-size: 1.2rem;
+      border: var(--border-width) solid var(--border-color);
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .task-card-inner {
+      border: var(--border-width) solid var(--border-color);
+      padding: 1.25rem;
+      background-color: white;
+      box-shadow: 3px 3px 0px var(--border-color);
+      position: relative;
+    }
+    .task-card-inner.completed {
+      background-color: #f0f0f0;
+      opacity: 0.8;
+    }
+    .practice-questions-list {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 2px dashed var(--border-color);
+    }
+    .practice-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: var(--accent-purple);
+    }
+    .q-item {
+      font-size: 0.9rem;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background-color: white !important;
+        color: black !important;
+      }
+      .sidebar, .top-navbar, .btn, .no-print {
+        display: none !important;
+      }
+      .main-wrapper {
+        margin-left: 0 !important;
+      }
+      .content-container {
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+      .day-card {
+        page-break-inside: avoid;
+        margin-bottom: 3rem;
+      }
+      .day-header {
+        background-color: #f0f0f0 !important;
+        color: black !important;
+        border: 2px solid black !important;
+      }
+      .task-card-inner {
+        box-shadow: none !important;
+        border: 2px solid black !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-wrapper">
+      <div id="navbar-placeholder"></div>
+
+      <div class="content-container">
+        
+        <!-- Setup fallback -->
+        <div id="setup-fallback" style="display: none;">
+          <div class="card" style="text-align: center; padding: 3rem;">
+            <h2>No Study Plan Configured</h2>
+            <p style="margin: 1rem 0 2rem 0; font-weight: 600;">Please set up your profile details first to generate a customized timeline.</p>
+            <a href="/setup" class="btn btn-secondary">⚡ Create Study Plan</a>
+          </div>
+        </div>
+
+        <div id="plan-content" style="display: none;">
+          <header class="plan-header no-print">
+            <div>
+              <p style="font-weight: 700;">Below is your complete study timeline. Work through tasks day-by-day and click the check boxes as you finish them.</p>
+            </div>
+            <div>
+              <button class="btn btn-secondary" onclick="window.print()">🖨️ Export / Print PDF</button>
+            </div>
+          </header>
+
+          <div id="timetable-container">
+            <!-- Daily schedule generated here -->
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="app-footer no-print">
+        StudyMate AI © 2026 | Built for Capstone Hackathon Submissions
+      </footer>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStudyPlan();
+    });
+
+    async function loadStudyPlan() {
+      try {
+        const response = await fetch('/api/study-plan');
+        const data = await response.json();
+
+        if (data.setup_required) {
+          document.getElementById('setup-fallback').style.display = 'block';
+          document.getElementById('plan-content').style.display = 'none';
+          return;
+        }
+
+        document.getElementById('setup-fallback').style.display = 'none';
+        document.getElementById('plan-content').style.display = 'block';
+
+        const completedSet = new Set(data.completed_tasks || []);
+        const container = document.getElementById('timetable-container');
+        container.innerHTML = '';
+
+        data.study_plan.days.forEach(day => {
+          const dayCard = document.createElement('div');
+          dayCard.className = 'day-card';
+
+          // Format readable date
+          let formattedDate = day.date;
+          try {
+            const dateObj = new Date(day.date);
+            formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+          } catch(e) {}
+
+          dayCard.innerHTML = `
+            <div class="day-header">
+              <span>📅 Day ${day.day_number} – ${formattedDate}</span>
+              <span class="badge badge-yellow" style="color: black; font-size:0.75rem;">Budget: ${data.profile.daily_hours} hrs</span>
+            </div>
+            <div class="tasks-grid" id="day-grid-${day.day_number}"></div>
+          `;
+          container.appendChild(dayCard);
+
+          const grid = document.getElementById(`day-grid-${day.day_number}`);
+          
+          day.tasks.forEach(task => {
+            const isChecked = completedSet.has(task.id);
+            const taskCard = document.createElement('div');
+            taskCard.className = `task-card-inner ${isChecked ? 'completed' : ''}`;
+            taskCard.id = `card-${task.id}`;
+
+            // Questions list
+            let questionsHtml = '';
+            if (task.practice_questions && task.practice_questions.length > 0) {
+              questionsHtml = `
+                <div class="practice-questions-list">
+                  <div class="practice-title">📝 Practice & Quizzes:</div>
+                  ${task.practice_questions.map(q => `<div class="q-item">${q}</div>`).join('')}
+                </div>
+              `;
+            }
+
+            taskCard.innerHTML = `
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                  <h4 style="font-size:1.15rem; font-weight:800; color: var(--accent-purple);">${task.subject}</h4>
+                  <p style="font-weight:700; margin-top:0.25rem;">${task.topic}</p>
+                </div>
+                <div class="no-print">
+                  <input type="checkbox" class="task-checkbox" data-id="${task.id}" ${isChecked ? 'checked' : ''} onchange="togglePlanTask('${task.id}')">
+                </div>
+              </div>
+              <div style="margin-top:0.75rem; font-size:0.85rem; font-weight:700; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <span class="badge badge-cyan">⏱️ ${task.estimated_hours} Hours</span>
+                <span class="badge badge-pink">🔄 Revise: ${task.revision_session}</span>
+              </div>
+              ${questionsHtml}
+            `;
+            grid.appendChild(taskCard);
+          });
+        });
+
+      } catch(err) {
+        console.error("Plan loading error:", err);
+      }
+    }
+
+    window.togglePlanTask = async function(taskId) {
+      try {
+        const response = await fetch('/api/study-plan/toggle-task', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task_id: taskId })
+        });
+        if (response.ok) {
+          const result = await response.json();
+          const card = document.getElementById(`card-${taskId}`);
+          const isCompleted = result.completed_tasks.includes(taskId);
+          
+          if (card) {
+            if (isCompleted) card.classList.add('completed');
+            else card.classList.remove('completed');
+          }
+        }
+      } catch(err) {
+        console.error(err);
+      }
+    };
+  </script>
+</body>
+</html>

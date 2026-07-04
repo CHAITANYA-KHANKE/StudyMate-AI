@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyMate AI – Smart Study Planner Agent</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .hero-section {
+      text-align: center;
+      padding: 4rem 1rem;
+      border: var(--border-width) solid var(--border-color);
+      background-color: var(--accent-yellow);
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--border-color);
+      margin-bottom: 3rem;
+    }
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .hero-subtitle {
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: 0 auto 2rem auto;
+      font-weight: 600;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    .feature-card {
+      background-color: var(--card-bg);
+      border: var(--border-width) solid var(--border-color);
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--border-color);
+      padding: 2rem;
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    /* Flowchart styles */
+    .flowchart-container {
+      border: var(--border-width) solid var(--border-color);
+      background-color: #FFFFFF;
+      padding: 2.5rem;
+      margin-bottom: 4rem;
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--border-color);
+    }
+    .flowchart-title {
+      font-size: 2rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .flowchart-steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .flow-step {
+      flex: 1;
+      min-width: 150px;
+      padding: 1rem;
+      border: 3px solid var(--border-color);
+      background-color: var(--card-bg);
+      text-align: center;
+      font-weight: 700;
+      position: relative;
+      box-shadow: 3px 3px 0px var(--border-color);
+    }
+    .flow-step.agent {
+      background-color: var(--accent-cyan);
+    }
+    .flow-step.output {
+      background-color: var(--accent-green);
+    }
+    .flow-arrow {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+    @media (max-width: 768px) {
+      .flowchart-steps {
+        flex-direction: column;
+      }
+      .flow-arrow {
+        transform: rotate(90deg);
+        margin: 0.5rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-placeholder"></div>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <!-- Navbar Placeholder -->
+      <div id="navbar-placeholder"></div>
+
+      <!-- Main Page Content -->
+      <div class="content-container">
+        
+        <!-- Hero Banner -->
+        <header class="hero-section">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🤖📖</div>
+          <h1 class="hero-title">StudyMate AI</h1>
+          <p class="hero-subtitle">
+            An advanced AI-powered concierge study agent. We analyze your subjects, exam date, daily available time, and preparation difficulty to design the perfect, personalized daily study calendar for your exams.
+          </p>
+          <a href="/setup" class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2rem;">
+            ⚡ Get Started Now
+          </a>
+        </header>
+
+        <!-- Features Section -->
+        <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 2rem; border-bottom: 4px solid var(--border-color); padding-bottom: 0.5rem; display: inline-block;">
+          ✨ Product Features
+        </h2>
+        <section class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">Custom AI Planner</h3>
+            <p>Smart Planner Agent partitions study blocks dynamically and integrates custom revision slots to protect you from exam burnout.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">Interactive Tracker</h3>
+            <p>Mark topics completed in real time. Automatically updates progress ratios, streaks, and subject completion charts.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">AI Chat Coach</h3>
+            <p>Stuck on an equation? Unsure what to focus on? Ask the StudyMate Chat Agent directly for immediate study strategies.</p>
+          </div>
+          <div class="feature-card" style="background-color: var(--accent-pink);">
+            <div class="feature-icon">⏱️</div>
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">Pomodoro Focus</h3>
+            <p>Stay productive with an integrated Pomodoro timer built in the exact same Neo-Brutalist visual style.</p>
+          </div>
+        </section>
+
+        <!-- Workflow Diagram -->
+        <section class="flowchart-container">
+          <h2 class="flowchart-title">🤖 AI Agent Workflow</h2>
+          <div class="flowchart-steps">
+            <div class="flow-step">
+              1. Student Info Setup<br>
+              <span style="font-size: 0.8rem; font-weight: 500;">(Input subjects, exam date, daily study budget)</span>
+            </div>
+            <div class="flow-arrow">➡️</div>
+            <div class="flow-step agent">
+              2. Planner Agent Analysis<br>
+              <span style="font-size: 0.8rem; font-weight: 500; color: #111;">(Calculates dates, balances hours via Gemini)</span>
+            </div>
+            <div class="flow-arrow">➡️</div>
+            <div class="flow-step output">
+              3. Dynamic Study Calendar<br>
+              <span style="font-size: 0.8rem; font-weight: 500; color: #111;">(Topic guidelines, practice Qs, check boxes)</span>
+            </div>
+            <div class="flow-arrow">➡️</div>
+            <div class="flow-step" style="background-color: var(--accent-orange);">
+              4. Active Progress Loop<br>
+              <span style="font-size: 0.8rem; font-weight: 500;">(Streak updates, Chart.js metrics, Chat coach tips)</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        StudyMate AI © 2026 | Built for Capstone Hackathon Submissions
+      </footer>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>

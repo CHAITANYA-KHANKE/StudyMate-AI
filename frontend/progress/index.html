@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress Tracker – StudyMate AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .metrics-header-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .metric-box {
+      border: var(--border-width) solid var(--border-color);
+      box-shadow: 3px 3px 0px var(--border-color);
+      padding: 1.5rem;
+      background-color: white;
+      text-align: center;
+    }
+    .chart-container-box {
+      background-color: white;
+      border: var(--border-width) solid var(--border-color);
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--border-color);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .chart-title-sub {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      border-bottom: 2px dashed black;
+      padding-bottom: 0.5rem;
+    }
+    canvas {
+      max-height: 300px;
+      width: 100% !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-wrapper">
+      <div id="navbar-placeholder"></div>
+
+      <div class="content-container">
+        
+        <!-- Setup fallback -->
+        <div id="setup-fallback" style="display: none;">
+          <div class="card" style="text-align: center; padding: 3rem;">
+            <h2>No Progress Records Yet</h2>
+            <p style="margin: 1rem 0 2rem 0; font-weight: 600;">Complete the profile setup to generate a plan and start tracking progress.</p>
+            <a href="/setup" class="btn btn-secondary">⚡ Create Study Plan</a>
+          </div>
+        </div>
+
+        <div id="progress-content" style="display: none;">
+          
+          <!-- Key Metrics Row -->
+          <div class="metrics-header-grid">
+            <div class="metric-box" style="background-color: var(--accent-cyan);">
+              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase;">Completion %</div>
+              <div class="metric-value" id="comp-pct">0%</div>
+            </div>
+            <div class="metric-box" style="background-color: var(--accent-yellow);">
+              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase;">Hours Studied</div>
+              <div class="metric-value" id="comp-hours">0h</div>
+            </div>
+            <div class="metric-box" style="background-color: var(--accent-green);">
+              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase;">Tasks Completed</div>
+              <div class="metric-value" id="comp-tasks">0 / 0</div>
+            </div>
+            <div class="metric-box" style="background-color: var(--accent-orange);">
+              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase;">Streak Level</div>
+              <div class="metric-value" id="comp-streak">0 Days</div>
+              <div style="font-size: 0.75rem; font-weight: 700; margin-top: 0.25rem;" id="comp-level">Beginner</div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="dashboard-grid">
+            
+            <!-- Weekly Progress Chart -->
+            <div class="col-6">
+              <div class="chart-container-box">
+                <div class="chart-title-sub">📊 Tasks Completed (Weekly)</div>
+                <canvas id="weeklyChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Subject Completion Chart -->
+            <div class="col-6">
+              <div class="chart-container-box">
+                <div class="chart-title-sub">📚 Subject Mastery Rate (%)</div>
+                <canvas id="subjectChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Learning Consistency / Daily Study Hours -->
+            <div class="col-12">
+              <div class="chart-container-box">
+                <div class="chart-title-sub">📈 Learning Consistency Index (Daily Targets)</div>
+                <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:1.5rem; padding:1rem 0;">
+                  <div style="text-align:center;">
+                    <div style="font-size: 3rem;">🏅</div>
+                    <h4 style="font-weight:800; margin-top:0.5rem;" id="consistency-badge">Beginner Studier</h4>
+                    <p style="font-size:0.85rem; font-weight:700; opacity:0.8; margin-top:0.25rem;">Keep ticking daily items to upgrade your tier.</p>
+                  </div>
+                  
+                  <div style="border-left: 3px dashed black; padding-left: 2rem; min-width: 250px;">
+                    <div style="margin-bottom:0.75rem; font-weight:700;">
+                      📅 Perfect Days: <span id="perfect-days" style="color:var(--accent-purple); font-weight:800;">0 / 0</span>
+                    </div>
+                    <div style="margin-bottom:0.75rem; font-weight:700;">
+                      📝 Total Tasks Pending: <span id="pending-tasks" style="color:var(--accent-red); font-weight:800;">0</span>
+                    </div>
+                    <div style="font-weight:700;">
+                      ⚡ Streak status: <span id="streak-status-text" style="color:var(--accent-green); font-weight:800;">In progress</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <footer class="app-footer">
+        StudyMate AI © 2026 | Built for Capstone Hackathon Submissions
+      </footer>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProgressTracker();
+    });
+
+    let weeklyChartInstance = null;
+    let subjectChartInstance = null;
+
+    async function loadProgressTracker() {
+      try {
+        const response = await fetch('/api/progress');
+        const data = await response.json();
+
+        if (data.setup_required) {
+          document.getElementById('setup-fallback').style.display = 'block';
+          document.getElementById('progress-content').style.display = 'none';
+          return;
+        }
+
+        document.getElementById('setup-fallback').style.display = 'none';
+        document.getElementById('progress-content').style.display = 'block';
+
+        const metrics = data.metrics;
+
+        // Populate cards
+        document.getElementById('comp-pct').textContent = `${metrics.percentage}%`;
+        document.getElementById('comp-hours').textContent = `${metrics.hours_completed}h`;
+        document.getElementById('comp-tasks').textContent = `${metrics.completed_count} / ${metrics.completed_count + metrics.pending_count}`;
+        document.getElementById('comp-streak').textContent = `${metrics.streak} Days`;
+        document.getElementById('comp-level').textContent = metrics.consistency_level;
+        
+        // Populate consistency index details
+        document.getElementById('consistency-badge').textContent = metrics.consistency_level;
+        document.getElementById('perfect-days').textContent = `${metrics.completed_days} / ${metrics.total_days} Days`;
+        document.getElementById('pending-tasks').textContent = metrics.pending_count;
+        document.getElementById('streak-status-text').textContent = metrics.streak > 0 ? "🔥 Streak Active!" : "💤 Go study today!";
+
+        // Chart 1: Weekly Progress Chart
+        const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+        const days = Object.keys(metrics.weekly_data);
+        const taskCounts = Object.values(metrics.weekly_data);
+
+        if (weeklyChartInstance) weeklyChartInstance.destroy();
+        weeklyChartInstance = new Chart(weeklyCtx, {
+          type: 'bar',
+          data: {
+            labels: days,
+            datasets: [{
+              label: 'Tasks Completed',
+              data: taskCounts,
+              backgroundColor: '#00B7FF',
+              borderColor: '#000000',
+              borderWidth: 3,
+              boxShadow: '3px 3px 0px #000'
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1, color: '#000', font: { weight: 'bold' } },
+                grid: { color: '#000', lineWidth: 1 }
+              },
+              x: {
+                ticks: { color: '#000', font: { weight: 'bold' } },
+                grid: { display: false }
+              }
+            },
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+
+        // Chart 2: Subject Completion Chart
+        const subjectCtx = document.getElementById('subjectChart').getContext('2d');
+        const subjects = Object.keys(metrics.subject_completion);
+        const completionRates = Object.values(metrics.subject_completion);
+
+        if (subjectChartInstance) subjectChartInstance.destroy();
+        subjectChartInstance = new Chart(subjectCtx, {
+          type: 'bar',
+          data: {
+            labels: subjects,
+            datasets: [{
+              label: 'Mastery Rate (%)',
+              data: completionRates,
+              backgroundColor: '#FFD23F',
+              borderColor: '#000000',
+              borderWidth: 3
+            }]
+          },
+          options: {
+            indexAxis: 'y', // Horizontal bars
+            responsive: true,
+            scales: {
+              x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: { color: '#000', font: { weight: 'bold' } },
+                grid: { color: '#000', lineWidth: 1 }
+              },
+              y: {
+                ticks: { color: '#000', font: { weight: 'bold' } },
+                grid: { display: false }
+              }
+            },
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+
+      } catch(err) {
+        console.error("Progress loading error:", err);
+      }
+    }
+  </script>
+</body>
+</html>
