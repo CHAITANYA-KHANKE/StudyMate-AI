@@ -123,7 +123,7 @@ Landing page introducing StudyMate AI with its Neo-Brutalist design and project 
 
 ## 👤 Student Setup
 
-📷 **Insert Screenshot Here**
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/2610411e-2de3-44e7-bfb4-4973985265a1" />
 
 Description:
 
@@ -133,7 +133,8 @@ Student profile form where users enter subjects, exam date, daily study hours, a
 
 ## 📊 Dashboard
 
-📷 **Insert Screenshot Here**
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/95a63dff-ec76-4126-8e5b-7c7e0efcb343" />
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/bf540b59-8842-41b3-9c78-2b11c1e4bb2c" />
 
 Description:
 
@@ -143,7 +144,8 @@ Displays today's study tasks, exam countdown, study streak, Pomodoro timer, and 
 
 ## 📅 AI Study Planner
 
-📷 **Insert Screenshot Here**
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/d608bf5b-4dda-41e4-8fe1-a04f54f3bb80" />
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/4a664e50-3d4e-4af5-bb82-8b77698b3326" />
 
 Description:
 
@@ -153,7 +155,7 @@ AI-generated personalized study timetable including revision sessions and task c
 
 ## 📈 Progress Analytics
 
-📷 **Insert Screenshot Here**
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/7e622ab9-4d05-45c3-9009-08462a895ea9" />
 
 Description:
 
@@ -162,8 +164,8 @@ Interactive charts displaying weekly study progress, completion percentage, and 
 ---
 
 ## 🤖 AI Study Coach
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/0c3916ca-54fd-44eb-8247-1dfd239ec822" />
 
-📷 **Insert Screenshot Here**
 
 Description:
 
@@ -173,7 +175,7 @@ Gemini-powered chatbot providing personalized academic guidance and study assist
 
 ## ⚙️ Settings
 
-📷 **Insert Screenshot Here**
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/d395cea7-8652-4ef7-a426-dbc6c5337fa6" />
 
 Description:
 
