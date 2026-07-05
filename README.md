@@ -134,7 +134,6 @@ Student profile form where users enter subjects, exam date, daily study hours, a
 ## 📊 Dashboard
 
 <img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/95a63dff-ec76-4126-8e5b-7c7e0efcb343" />
-<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/bf540b59-8842-41b3-9c78-2b11c1e4bb2c" />
 
 Description:
 
