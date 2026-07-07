@@ -3,7 +3,7 @@ import json
 import datetime
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -270,6 +270,12 @@ def reset_all(x_user_id: str = Header(default="default_user")):
     }
     save_user_data(x_user_id, data)
     return {"status": "success", "message": "All data has been reset."}
+
+@app.get("/api/admin/db-download")
+def download_database():
+    if os.path.exists(DB_FILE):
+        return FileResponse(DB_FILE, media_type="application/json", filename="users.json")
+    raise HTTPException(status_code=404, detail="Database file not found")
 
 # Mount static files and redirect routes
 
